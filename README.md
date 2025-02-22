@@ -3,6 +3,21 @@
 ## Overview  
 This project implements a smart honeypot designed to attract attackers, log their actions, and dynamically adapt its behavior using AI to confuse them. The honeypot mimics a vulnerable system and tracks attack attempts while utilizing AI (via Hugging Face API) for real-time analysis and deception. Additionally, real-time alerts are sent using Gmail when attacks are detected.
 
+## Purpose and Motivation  
+In today's digital landscape, cyber attacks are becoming increasingly sophisticated. Traditional security measures often struggle to keep pace with evolving threats. This project serves two primary purposes:  
+
+1. **Research and Learning**:  
+   - To understand attacker behavior and tactics in a controlled environment.  
+   - To experiment with AI-driven techniques for analyzing and responding to cyber threats.  
+   - To gain insights into the efficacy of honeypots as an active defense mechanism.
+
+2. **Active Defense and Deception**:  
+   - To build a system that not only detects but also actively confounds attackers by dynamically adapting its responses.  
+   - To collect and analyze attack data that can inform future security strategies.  
+   - To demonstrate how integrating AI can enhance traditional cybersecurity tools and create a more proactive defense strategy.
+
+This project is an important step towards innovative cybersecurity solutions that leverage modern AI capabilities to anticipate and mitigate threats before they cause significant harm.
+
 ### Key Features  
 - **Deceptive Services**: Fake SSH, HTTP, or FTP servers that attract attackers.  
 - **AI-Based Attack Analysis**: Leverages Hugging Face's API to analyze attack logs and understand attack strategies.  
@@ -28,9 +43,10 @@ Ensure you have the following installed and configured:
 
 ## Installation  
 
-**Install Dependencies**
+1. **Install Dependencies**  
 
 pip install flask openai requests cowrie elasticsearch
+
 
 ## Files for the Project
 - **adaptive_honeypot.py**: Handles the AI-driven deception and dynamic response generation based on attack patterns. 
