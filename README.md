@@ -1,94 +1,97 @@
-# 🛡️ AI-Driven Honeypot Project  
+# Honeypot Detection System
 
-An intelligent honeypot system that mimics vulnerable services, logs attacker activity, and leverages **AI (Hugging Face API)** to analyze and dynamically adapt responses in real-time. The system also sends **email alerts via Gmail** when attacks are detected.  
+An AI-powered distributed honeypot that captures attacker activity across SSH, HTTP,
+and FTP services, analyses threats in real-time using Claude AI, and stores structured
+intelligence for investigation.
 
-## 🔎 Overview  
-This project implements a smart honeypot designed to:  
-- Attract attackers and log their actions.  
-- Dynamically adapt its behavior using AI to confuse attackers.  
-- Provide real-time alerts and visualizations for security monitoring.  
+## Architecture
+```
+Attackers → [SSH / HTTP / FTP Honeypots]
+                      ↓
+              [Redis Event Bus]
+                      ↓
+           [AI Analysis Engine] ← Claude API
+            (threat scoring, IOC extraction,
+             MITRE ATT&CK mapping)
+                      ↓
+         ┌────────────┴────────────┐
+    [PostgreSQL]          [Elasticsearch]
+    (structured           (full-text search)
+     time-series)
+         └────────────┬────────────┘
+              [FastAPI REST API]
+                      ↓
+           [Alert Manager]
+        (Slack + Gmail, rate-limited)
+```
 
-## 🎯 Purpose & Motivation
-  
-### 1. Research & Learning  
+## Key Features
 
-- Understand attacker behavior and tactics in a controlled environment.  
-- Experiment with AI-driven techniques for analyzing and responding to cyber threats.  
-- Assess the effectiveness of honeypots as an **active defense mechanism**.  
+- **Adaptive deception** — AI generates dynamic fake responses tailored to each attacker
+- **Threat intelligence** — MITRE ATT&CK TTP mapping, IOC extraction, intent classification
+- **Dual storage** — PostgreSQL for structured queries, Elasticsearch for full-text search
+- **Real-time alerts** — Slack and Gmail notifications with 5-minute rate limiting per IP
+- **Production-ready** — async Python, structured JSON logging, Docker Compose, CI/CD
 
-### 2. Active Defense & Deception  
+## Tech Stack
 
-- Detect, log, and **actively confound attackers** by adapting responses.  
-- Collect and analyze attack data for stronger future defense strategies.  
-- Demonstrate how AI can **enhance traditional cybersecurity tools**.  
+| Layer | Technology |
+|-------|-----------|
+| Honeypot services | Python `asyncio` (raw TCP servers) |
+| AI analysis | Anthropic Claude API |
+| Event streaming | Redis Pub/Sub |
+| Structured storage | PostgreSQL + asyncpg |
+| Search | Elasticsearch |
+| REST API | FastAPI + uvicorn |
+| Alerting | Slack webhooks + Gmail SMTP |
+| Containerisation | Docker Compose |
+| CI/CD | GitHub Actions |
 
-## ✨ Key Features
-  
-- **Deceptive Services**: Fake SSH, HTTP, or FTP servers to attract attackers.  
-- **AI-Based Analysis**: Uses Hugging Face API to analyze attack logs and strategies.  
-- **Adaptive Responses**: Dynamically adjusts honeypot behavior to mislead attackers.  
-- **Visualization**: Monitor attacker activity with **Elasticsearch & Kibana** dashboards.  
-- **Real-Time Alerts**: Sends Gmail notifications when attacks occur.  
+## Quick Start
+```bash
+# 1. Clone and configure
+git clone https://github.com/senaalanur/honeypot-detection.git
+cd honeypot-detection
+cp .env.example .env
+# Edit .env and add your ANTHROPIC_API_KEY
 
-## 📋 Prerequisites  
-Make sure you have the following installed:  
-- **Python 3.x**  
-- **Docker** (for containerized honeypot + ELK stack)  
-- **Elasticsearch & Kibana** (log storage + visualization)  
-- **Flask** (REST API for logs)  
-- **Hugging Face API key**  
-- **Gmail API credentials** (for email alerts)  
+# 2. Start everything
+docker compose -f docker/docker-compose.yml up --build
 
-## 🛠️ Tools & Technologies  
-- **Cowrie** – SSH honeypot framework  
-- **Flask** – API backend  
-- **Hugging Face API** – AI-based log analysis and deception logic  
-- **ELK Stack** – Elasticsearch, Logstash, Kibana for log monitoring  
-- **Gmail API** – Sends email alerts  
+# 3. The system is now running:
+#    SSH honeypot  → localhost:2222
+#    HTTP honeypot → localhost:8080
+#    FTP honeypot  → localhost:2121
+#    REST API      → localhost:8000
+#    Kibana        → localhost:5601
+```
 
-## ⚙️ Installation  
+## API Endpoints
 
-1- Clone the repository:
-git clone https://github.com/senaalanur/ai-honeypot.git
-cd ai-honeypot
+| Endpoint | Description |
+|----------|-------------|
+| `GET /health` | Health check |
+| `GET /api/events?limit=100` | Recent attack events |
+| `GET /api/stats` | 24h statistics |
+| `GET /api/search?q=<query>` | Full-text search across all events |
 
-2- Install dependencies:
-pip install -r requirements-dev.txt
+## Running Tests
+```bash
+pip install -e ".[dev]"
+pytest tests/ -v --cov=src
+```
 
-3- Set up Docker for Elasticsearch & Kibana
+## Project Structure
+```
+src/
+├── honeypot/       # SSH, HTTP, FTP async listeners
+├── analysis/       # AI classifier, IOC extractor
+├── storage/        # PostgreSQL + Elasticsearch clients
+├── alerts/         # Slack + Gmail alert manager
+├── api/            # FastAPI REST routes
+└── core/           # Config, logging, Redis event bus
+```
 
-4- Ensure Docker is running, then start the ELK services.
+## License
 
-5- Configure environment variables
-
-
-6- Set your Hugging Face API key and Gmail credentials inside a .env file.
-
-7- Run the honeypot:
-python adaptive_honeypot.py
-
-
-## 📂 Project Structure
-
-- adaptive_honeypot.py – Core honeypot with AI-driven deception logic
-
-- ai_attack_analyzer.py – Analyzes logs using Hugging Face API
-
-- email_alerts.py – Sends Gmail alerts on detected attacks
-
-- requirements-dev.txt – Dependencies list
-
-## 🚀 Usage
-
-- Start the honeypot and let it listen for incoming connections.
-
-- Monitor logs in Kibana dashboards.
-
-- Receive real-time Gmail alerts when attackers interact with the honeypot.
-
-- Analyze attacker behavior using AI-driven insights.
-
-### 📜 License
-This project is open-source and available under the MIT License.
-
-
+MIT
