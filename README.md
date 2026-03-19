@@ -4,6 +4,10 @@ An AI-powered distributed honeypot that captures attacker activity across SSH, H
 and FTP services, analyses threats in real-time using Claude AI, and stores structured
 intelligence for investigation.
 
+## Demo
+
+https://github.com/senaalanur/honeypot-detection/blob/main/demo.mp4
+
 ## Architecture
 ```
 Attackers → [SSH / HTTP / FTP Honeypots]
